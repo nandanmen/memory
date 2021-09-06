@@ -1,25 +1,15 @@
+import { Pointer } from './pointer';
+
 export type Value = number | string | boolean;
 
 export type Block = {
-  value: Value;
+  value: Value | null;
   allocated: boolean;
-};
-
-export type Pointer = {
-  /**
-   * Size of the associated allocated block.
-   */
-  blockSize: number;
-  /**
-   * Size of the _type_ of data that the pointer is pointing to.
-   */
-  typeSize: number;
-  address: number;
 };
 
 export interface Memory {
   contents: Block[];
-  get(pointer: Pointer): Value;
+  get(pointer: Pointer): Value | null;
   set(pointer: Pointer, value: Value): void;
   allocate(bytes: number): Pointer;
   free(pointer: Pointer): void;

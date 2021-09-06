@@ -30,3 +30,28 @@ memory.get(word); // doesn't work
 
 memory.get(word); // returns "h" instead of the whole word
 ```
+
+## Type Size
+
+A type size represents the size, in bytes, of an individual type. There are four valid types:
+
+- Number -> 8 bytes
+- Boolean -> 1 byte
+- Char -> 1 byte
+- Box -> 9 bytes
+
+The "box" type is a variable-typed container that's 9 bytes long (1 byte for the tag, 8 for the value).
+
+## How to store numbers?
+
+The simplest way to design pointers is to treat them as addresses:
+
+- Retrieving the value of a pointer would be to read from the address the pointer is associated with
+- Setting a value of a pointer would be to set at the given address, nothing more
+
+If a pointer has type information, we would modify this as follows:
+
+- Retrieving the value of a pointer would be to read the entire block where the block size = `sizeof(value)`
+- Setting the value of a pointer would set the entire block as well
+
+At this point, pointers no longer associate with a single address; rather they associate with whole blocks where the block is as large as the value that the pointer points to.
