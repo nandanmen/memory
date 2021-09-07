@@ -8,7 +8,7 @@ export type Block = {
 };
 
 export interface Memory {
-  contents: Block[];
+  contents(): Block[];
   get(pointer: Pointer): Value | null;
   set(pointer: Pointer, value: Value): void;
   allocate(bytes: number): Pointer;
