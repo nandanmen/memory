@@ -5,7 +5,7 @@ describe('Memory', () => {
     describe('allocated', () => {
       it('fetches the value', () => {
         const memory = createMemory([{ allocated: true, value: 1 }]);
-        const pointer = new Pointer(0, 1, 1);
+        const pointer = new Pointer({ address: 0, blockSize: 1, typeSize: 1 });
         expect(memory.get(pointer)).toEqual(1);
       });
     });
@@ -16,7 +16,7 @@ describe('Memory', () => {
           { allocated: true, value: null },
           { allocated: true, value: 12 },
         ]);
-        const pointer = new Pointer(0, 1, 2);
+        const pointer = new Pointer({ address: 0, blockSize: 1, typeSize: 2 });
         expect(memory.get(pointer)).toEqual(12);
       });
     });
@@ -27,7 +27,7 @@ describe('Memory', () => {
           { allocated: false, value: null },
           { allocated: true, value: 12 },
         ]);
-        const pointer = new Pointer(0, 1, 2);
+        const pointer = new Pointer({ address: 0, blockSize: 1, typeSize: 2 });
         expect(() => memory.get(pointer)).toThrowErrorMatchingInlineSnapshot(
           `"Invalid memory access at pointer: {\\"address\\":0,\\"blockSize\\":1,\\"typeSize\\":2}"`
         );
@@ -38,7 +38,7 @@ describe('Memory', () => {
   describe('set', () => {
     it("sets the value and the pointer's type size", () => {
       const memory = createMemory([{ allocated: true, value: null }]);
-      const pointer = new Pointer(0, 1, 0);
+      const pointer = new Pointer({ address: 0, blockSize: 1, typeSize: 0 });
       memory.set(pointer, 'a');
 
       expect(pointer.typeSize).toEqual(1);
@@ -55,7 +55,9 @@ describe('Memory', () => {
         { allocated: true, value: 'a' },
       ]);
       const result = memory.allocate(2);
-      expect(result).toEqual(new Pointer(1, 2, 0));
+      expect(result).toEqual(
+        new Pointer({ address: 1, blockSize: 2, typeSize: 0 })
+      );
 
       memory.contents().forEach(block => expect(block.allocated).toBeTruthy());
     });
@@ -64,7 +66,9 @@ describe('Memory', () => {
       const memory = createMemory();
       const result = memory.allocate(2);
 
-      expect(result).toEqual(new Pointer(0, 2, 0));
+      expect(result).toEqual(
+        new Pointer({ address: 0, blockSize: 2, typeSize: 0 })
+      );
 
       const blocks = memory.contents();
       expect(blocks).toHaveLength(2);
@@ -72,5 +76,16 @@ describe('Memory', () => {
     });
   });
 
-  describe('free', () => {});
+  describe('free', () => {
+    it('deallocates all blocks pointed by the pointer', () => {
+      const memory = createMemory([
+        { allocated: true, value: 'a' },
+        { allocated: true, value: 'b' },
+        { allocated: true, value: 'c' },
+      ]);
+
+      memory.free(new Pointer({ address: 0, blockSize: 3, typeSize: 1 }));
+      memory.contents().forEach(block => expect(block.allocated).toBeFalsy());
+    });
+  });
 });

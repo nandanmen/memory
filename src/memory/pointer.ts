@@ -1,3 +1,9 @@
+type PointerOptions = {
+  address: number;
+  blockSize: number;
+  typeSize: number;
+};
+
 export class Pointer {
   /**
    * Size of the associated allocated block.
@@ -9,7 +15,7 @@ export class Pointer {
   typeSize: number;
   address: number;
 
-  constructor(address: number, blockSize: number, typeSize: number) {
+  constructor({ address, blockSize, typeSize }: PointerOptions) {
     this.address = address;
     this.blockSize = blockSize;
     this.typeSize = typeSize;

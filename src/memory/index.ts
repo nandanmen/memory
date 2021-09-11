@@ -29,14 +29,22 @@ export const createMemory = (data: Block[] = []): Memory => {
         contents = resize(contents, Math.max(contents.length * 2, bytes));
       }
       contents = allocate(contents, address, bytes);
-      return new Pointer(address, bytes, 0);
+      return new Pointer({ address, blockSize: bytes, typeSize: 0 });
     },
     free: pointer => {
-      // TODO
-      console.log(pointer);
+      contents = freeAllBlocks(contents, pointer.address, pointer.blockSize);
     },
   };
 };
+
+// --
+
+function freeAllBlocks(blocks: Block[], startingAddress: number, size: number) {
+  range(size).forEach(offset => {
+    blocks[startingAddress + offset].allocated = false;
+  });
+  return blocks;
+}
 
 // --
 
